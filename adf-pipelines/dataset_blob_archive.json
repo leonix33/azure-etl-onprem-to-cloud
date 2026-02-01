@@ -1,0 +1,27 @@
+{
+  "name": "ds_blob_archive_csv",
+  "properties": {
+    "linkedServiceName": {
+      "referenceName": "ls_azure_blob_storage",
+      "type": "LinkedServiceReference"
+    },
+    "annotations": [],
+    "type": "DelimitedText",
+    "typeProperties": {
+      "location": {
+        "type": "AzureBlobStorageLocation",
+        "folderPath": {
+          "value": "@formatDateTime(utcnow(), 'yyyy/MM/dd')",
+          "type": "Expression"
+        },
+        "container": "archive-data"
+      },
+      "columnDelimiter": ",",
+      "escapeChar": "\\",
+      "firstRowAsHeader": true,
+      "quoteChar": "\""
+    },
+    "schema": []
+  },
+  "type": "Microsoft.DataFactory/factories/datasets"
+}

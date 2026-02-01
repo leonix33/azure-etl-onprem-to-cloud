@@ -1,0 +1,59 @@
+variable "resource_group_name" {
+  description = "Name of the resource group"
+  type        = string
+  default     = "rg-azure-etl-project"
+}
+
+variable "location" {
+  description = "Azure region for resources"
+  type        = string
+  default     = "eastus2"
+}
+
+variable "environment" {
+  description = "Environment name"
+  type        = string
+  default     = "dev"
+}
+
+variable "vm_admin_username" {
+  description = "Admin username for the VM"
+  type        = string
+  default     = "azureadmin"
+}
+
+variable "vm_admin_password" {
+  description = "Admin password for the VM (will be stored in Key Vault)"
+  type        = string
+  sensitive   = true
+  default     = null # Will be auto-generated if not provided
+}
+
+variable "vm_size" {
+  description = "Size of the VM for SHIR"
+  type        = string
+  default     = "Standard_D2s_v3"
+}
+
+variable "source_data_path" {
+  description = "Path to on-premise data source"
+  type        = string
+  default     = "C:\\OnPremiseData"
+}
+
+variable "tags" {
+  description = "Common tags for all resources"
+  type        = map(string)
+  default = {
+    Project     = "Azure-ETL-OnPrem-to-Cloud"
+    ManagedBy   = "Terraform"
+    Environment = "Development"
+    Purpose     = "ETL-Demo"
+  }
+}
+
+variable "allowed_ip_addresses" {
+  description = "List of allowed IP addresses for Key Vault and VM access"
+  type        = list(string)
+  default     = [] # Add your public IP here
+}
