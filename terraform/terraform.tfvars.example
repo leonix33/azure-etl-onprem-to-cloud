@@ -1,0 +1,37 @@
+# Terraform Variables Configuration
+# Copy this file to terraform.tfvars and customize for your deployment
+# cp terraform.tfvars.example terraform.tfvars
+
+# Resource Group
+resource_group_name = "rg-azure-etl-project"
+
+# Azure Region
+location = "eastus2"  # Options: eastus, eastus2, westus2, centralus, etc.
+
+# Environment
+environment = "dev"  # Options: dev, test, prod
+
+# VM Configuration
+vm_admin_username = "azureadmin"
+# vm_admin_password will be auto-generated and stored in Key Vault if not provided
+vm_size = "Standard_D2s_v3"  # Options: Standard_D2s_v3, Standard_D4s_v3, Standard_B2s
+
+# On-Premise Data Source Path
+source_data_path = "C:\\OnPremiseData"
+
+# Security - Add your public IP address for secure access
+# Get your IP: curl https://api.ipify.org
+allowed_ip_addresses = [
+  # "1.2.3.4/32",  # Your office IP
+  # "5.6.7.8/32",  # Your home IP
+]
+
+# Tags
+tags = {
+  Project     = "Azure-ETL-OnPrem-to-Cloud"
+  ManagedBy   = "Terraform"
+  Environment = "Development"
+  Purpose     = "ETL-Demo"
+  Owner       = "YourName"
+  CostCenter  = "Engineering"
+}
