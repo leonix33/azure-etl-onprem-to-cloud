@@ -8,13 +8,14 @@ resource "azurerm_data_factory" "etl_adf" {
     type = "SystemAssigned"
   }
 
-  github_configuration {
-    account_name    = "your-github-account" # Update with your GitHub username
-    branch_name     = "main"
-    git_url         = "https://github.com"
-    repository_name = "azure-etl-project" # Update with your repo name
-    root_folder     = "/adf-pipelines"
-  }
+  # Uncomment and configure after pushing to GitHub
+  # github_configuration {
+  #   account_name    = "your-github-username" # Update with your GitHub username
+  #   branch_name     = "main"
+  #   git_url         = "https://github.com"
+  #   repository_name = "azure-etl-project" # Update with your repo name
+  #   root_folder     = "/adf-pipelines"
+  # }
 
   tags = var.tags
 }
