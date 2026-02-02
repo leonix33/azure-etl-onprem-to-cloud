@@ -69,3 +69,15 @@ variable "databricks_cluster_id" {
   type        = string
   default     = ""
 }
+
+variable "fabric_sku" {
+  description = "Microsoft Fabric capacity SKU (F2, F4, F8, F16, F32, F64)"
+  type        = string
+  default     = "F2" # Minimum for production, ~$262/month
+}
+
+variable "fabric_admin_emails" {
+  description = "List of admin emails for Fabric capacity"
+  type        = list(string)
+  default     = ["admin@example.com"]
+}

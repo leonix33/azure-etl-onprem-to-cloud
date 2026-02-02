@@ -45,8 +45,11 @@ A complete end-to-end ETL (Extract, Transform, Load) solution for migrating data
 - **Self-Hosted Integration Runtime (SHIR)**: Secure connection between on-premise and cloud
 - **Azure Key Vault**: Centralized secrets management for credentials
 - **Azure Data Factory**: Orchestration of ETL pipelines
-- **Azure Blob Storage**: Data Lake for raw, processed, and archived data
+- **Azure Blob Storage**: Data Lake for raw, processed, and archived data with medallion architecture (Bronze/Silver/Gold)
 - **Azure SQL Database**: Target database for transformed data
+- **Azure Databricks**: Big data processing with Delta Lake and Spark
+- **Microsoft Fabric**: Unified analytics platform with OneLake integration and Direct Lake mode for Power BI
+- **Comprehensive Monitoring**: Azure Monitor, Log Analytics, Application Insights with custom alerts
 - **Infrastructure as Code**: Complete Terraform automation
 - **Auto-Shutdown**: Cost optimization with VM auto-shutdown
 - **Secure by Default**: Network security groups, private endpoints, managed identities

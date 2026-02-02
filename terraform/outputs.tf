@@ -80,6 +80,21 @@ output "databricks_workspace_id" {
   value       = azurerm_databricks_workspace.etl_databricks.id
 }
 
+output "fabric_capacity_id" {
+  description = "ID of the Microsoft Fabric capacity"
+  value       = azurerm_fabric_capacity.etl_fabric.id
+}
+
+output "fabric_capacity_name" {
+  description = "Name of the Microsoft Fabric capacity"
+  value       = azurerm_fabric_capacity.etl_fabric.name
+}
+
+output "fabric_portal_url" {
+  description = "URL to access Microsoft Fabric portal"
+  value       = "https://app.fabric.microsoft.com"
+}
+
 
 output "shir_name" {
   description = "Name of the Self-Hosted Integration Runtime"
