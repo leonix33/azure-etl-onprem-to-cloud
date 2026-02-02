@@ -41,6 +41,12 @@ variable "source_data_path" {
   default     = "C:\\OnPremiseData"
 }
 
+variable "alert_email_address" {
+  description = "Email address for monitoring alerts"
+  type        = string
+  default     = "admin@example.com" # Change this to your email
+}
+
 variable "tags" {
   description = "Common tags for all resources"
   type        = map(string)
@@ -56,4 +62,10 @@ variable "allowed_ip_addresses" {
   description = "List of allowed IP addresses for Key Vault and VM access"
   type        = list(string)
   default     = [] # Add your public IP here
+}
+
+variable "databricks_cluster_id" {
+  description = "Existing Databricks cluster ID (optional, will create new if not provided)"
+  type        = string
+  default     = ""
 }

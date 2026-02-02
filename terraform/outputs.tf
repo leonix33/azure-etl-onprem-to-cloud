@@ -48,6 +48,39 @@ output "data_factory_id" {
   value       = azurerm_data_factory.etl_adf.id
 }
 
+output "log_analytics_workspace_id" {
+  description = "ID of the Log Analytics workspace"
+  value       = azurerm_log_analytics_workspace.etl_logs.id
+}
+
+output "log_analytics_workspace_name" {
+  description = "Name of the Log Analytics workspace"
+  value       = azurerm_log_analytics_workspace.etl_logs.name
+}
+
+output "application_insights_instrumentation_key" {
+  description = "Application Insights instrumentation key"
+  value       = azurerm_application_insights.etl_insights.instrumentation_key
+  sensitive   = true
+}
+
+output "application_insights_connection_string" {
+  description = "Application Insights connection string"
+  value       = azurerm_application_insights.etl_insights.connection_string
+  sensitive   = true
+}
+
+output "databricks_workspace_url" {
+  description = "URL of the Databricks workspace"
+  value       = "https://${azurerm_databricks_workspace.etl_databricks.workspace_url}"
+}
+
+output "databricks_workspace_id" {
+  description = "ID of the Databricks workspace"
+  value       = azurerm_databricks_workspace.etl_databricks.id
+}
+
+
 output "shir_name" {
   description = "Name of the Self-Hosted Integration Runtime"
   value       = azurerm_data_factory_integration_runtime_self_hosted.shir.name
