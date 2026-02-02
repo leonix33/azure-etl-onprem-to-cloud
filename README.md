@@ -6,7 +6,7 @@
 
 A complete end-to-end ETL (Extract, Transform, Load) solution for migrating data from on-premise systems to Azure Cloud using Azure Data Factory, Self-Hosted Integration Runtime, Key Vault, and Azure SQL Database.
 
-## 🏗️ Architecture
+##  Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
@@ -40,7 +40,7 @@ A complete end-to-end ETL (Extract, Transform, Load) solution for migrating data
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-## 🎯 Features
+## Features
 
 - **Self-Hosted Integration Runtime (SHIR)**: Secure connection between on-premise and cloud
 - **Azure Key Vault**: Centralized secrets management for credentials
@@ -54,7 +54,7 @@ A complete end-to-end ETL (Extract, Transform, Load) solution for migrating data
 - **Auto-Shutdown**: Cost optimization with VM auto-shutdown
 - **Secure by Default**: Network security groups, private endpoints, managed identities
 
-## 📋 Prerequisites
+##  Prerequisites
 
 - Azure CLI (`az`) installed and configured
 - Terraform 1.0 or higher
@@ -62,7 +62,7 @@ A complete end-to-end ETL (Extract, Transform, Load) solution for migrating data
 - macOS/Linux terminal or Windows PowerShell
 - RDP client for Windows VM access
 
-## 🚀 Quick Start
+##  Quick Start
 
 ### 1. Clone and Navigate
 
@@ -85,12 +85,12 @@ Edit [terraform/variables.tf](terraform/variables.tf) to customize:
 ```
 
 This will:
-- ✅ Initialize Terraform
-- ✅ Create all Azure resources
-- ✅ Configure networking and security
-- ✅ Set up Key Vault with secrets
-- ✅ Deploy Data Factory with SHIR
-- ✅ Output connection details
+-  Initialize Terraform
+-  Create all Azure resources
+-  Configure networking and security
+-  Set up Key Vault with secrets
+-  Deploy Data Factory with SHIR
+-  Output connection details
 
 ### 4. Configure SHIR on VM
 
@@ -170,7 +170,7 @@ azure-etl-project/
 └── README.md             # This file
 ```
 
-## 💰 Cost Management
+##  Cost Management
 
 ### Estimated Monthly Costs (24/7 operation)
 
@@ -198,7 +198,7 @@ azure-etl-project/
    ./scripts/cleanup.sh
    ```
 
-## 🔐 Security Features
+##  Security Features
 
 - ✅ All credentials stored in Azure Key Vault
 - ✅ Managed Identity for Data Factory
@@ -208,7 +208,7 @@ azure-etl-project/
 - ✅ IP whitelisting for Key Vault and SQL
 - ✅ Soft delete enabled on Key Vault
 
-## 🔧 Common Operations
+##  Common Operations
 
 ### Monitor Resources
 ```bash
@@ -232,7 +232,7 @@ Data Factory → Manage → Integration Runtimes
 Data Factory → Author → Pipelines → OnPrem_to_Azure_ETL_Pipeline → Debug
 ```
 
-## 📊 Data Flow
+## Data Flow
 
 1. **Source**: CSV files in `C:\OnPremiseData` on VM
 2. **Landing**: Azure Blob Storage → `raw-data` container
@@ -240,7 +240,7 @@ Data Factory → Author → Pipelines → OnPrem_to_Azure_ETL_Pipeline → Debug
 4. **Target**: Azure SQL Database → `dbo.Employees` table
 5. **Archive**: Azure Blob Storage → `archive-data` container (dated folders)
 
-## 🔄 Pipeline Schedule
+##  Pipeline Schedule
 
 The ETL pipeline can be scheduled to run:
 - Hourly
@@ -250,7 +250,7 @@ The ETL pipeline can be scheduled to run:
 
 Configure in Data Factory → Triggers
 
-## 🐛 Troubleshooting
+##  Troubleshooting
 
 ### SHIR Not Connecting
 - Check VM is running: `./scripts/monitor.sh`
@@ -269,7 +269,7 @@ Configure in Data Factory → Triggers
 - Check connection string in Key Vault
 - Ensure SQL Database is online
 
-## 📝 Git Integration
+##  Git Integration
 
 ### Initialize Local Repository
 
@@ -295,7 +295,7 @@ After pushing to GitHub, update [terraform/datafactory.tf](terraform/datafactory
 - Set your repository name
 - Redeploy with `./scripts/deploy.sh`
 
-## 🧹 Cleanup
+##  Cleanup
 
 When you're done with the project:
 
@@ -308,27 +308,27 @@ This will:
 - Remove Terraform state
 - Clean up local files
 
-⚠️ **Warning**: This is irreversible!
+ **Warning**: This is irreversible!
 
-## 📚 Learn More
+##  Learn More
 
 - [Azure Data Factory Documentation](https://docs.microsoft.com/azure/data-factory/)
 - [Self-Hosted Integration Runtime](https://docs.microsoft.com/azure/data-factory/concepts-integration-runtime)
 - [Azure Key Vault](https://docs.microsoft.com/azure/key-vault/)
 - [Terraform Azure Provider](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs)
 
-## 🤝 Contributing
+##  Contributing
 
 This is a personal learning/portfolio project. Feel free to fork and adapt for your own use.
 
-## 📄 License
+##  License
 
 MIT License - See LICENSE file for details
 
-## 👤 Author
+##  Author
 
 Your Name - Azure Cloud Engineer
 
 ---
 
-**Built with** ❤️ **using Terraform and Azure**
+**Built with**  **using Terraform and Azure**
