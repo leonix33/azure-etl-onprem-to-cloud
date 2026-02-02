@@ -43,3 +43,8 @@ ENV/
 # Logs
 *.log
 logs/
+tfplan
+*.tfstate
+*.tfstate.*
+.terraform/
+*.msi

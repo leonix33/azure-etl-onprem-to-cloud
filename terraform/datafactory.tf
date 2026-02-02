@@ -42,24 +42,16 @@ resource "azurerm_data_factory_linked_service_azure_blob_storage" "blob_linked" 
   name            = "ls_azure_blob_storage"
   data_factory_id = azurerm_data_factory.etl_adf.id
 
-  service_endpoint = azurerm_storage_account.etl_storage.primary_blob_endpoint
-
-  key_vault_connection_string {
-    linked_service_name = azurerm_data_factory_linked_service_key_vault.kv_linked.name
-    secret_name         = azurerm_key_vault_secret.storage_connection_string.name
-  }
+  connection_string = azurerm_storage_account.etl_storage.primary_connection_string
 }
 
-# Linked Service - File System (On-Premise via SHIR)
-resource "azurerm_data_factory_linked_service_file_system" "onprem_filesystem" {
-  name                     = "ls_onprem_filesystem"
-  data_factory_id          = azurerm_data_factory.etl_adf.id
-  integration_runtime_name = azurerm_data_factory_integration_runtime_self_hosted.shir.name
-
-  host     = var.source_data_path
-  user_id  = var.vm_admin_username
-  password = azurerm_key_vault_secret.vm_admin_password.value
-}
+# Note: File System linked service must be created manually in Azure Data Factory
+# or using ARM templates, as Terraform doesn't support this resource type yet.
+# After deployment, create it in the ADF UI with:
+# - Name: ls_onprem_filesystem
+# - Integration Runtime: SHIR-OnPremise
+# - Host: C:\OnPremiseData
+# - Authentication: Windows (use credentials from Key Vault)
 
 # Grant Storage Blob Data Contributor role to ADF
 resource "azurerm_role_assignment" "adf_storage_contributor" {

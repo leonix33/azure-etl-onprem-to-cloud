@@ -9,8 +9,6 @@ resource "azurerm_storage_account" "etl_storage" {
   is_hns_enabled           = true # Enable Data Lake Gen2
 
   blob_properties {
-    versioning_enabled = true
-
     delete_retention_policy {
       days = 7
     }

@@ -27,7 +27,7 @@ resource "azurerm_mssql_database" "etl_db" {
   server_id      = azurerm_mssql_server.etl_sql.id
   collation      = "SQL_Latin1_General_CP1_CI_AS"
   license_type   = "LicenseIncluded"
-  max_size_gb    = 10
+
   sku_name       = "Basic"
   zone_redundant = false
 
@@ -47,8 +47,8 @@ resource "azurerm_mssql_firewall_rule" "allow_client_ip" {
   count            = length(var.allowed_ip_addresses)
   name             = "AllowClientIP-${count.index}"
   server_id        = azurerm_mssql_server.etl_sql.id
-  start_ip_address = var.allowed_ip_addresses[count.index]
-  end_ip_address   = var.allowed_ip_addresses[count.index]
+  start_ip_address = split("/", var.allowed_ip_addresses[count.index])[0]
+  end_ip_address   = split("/", var.allowed_ip_addresses[count.index])[0]
 }
 
 # Linked Service - Azure SQL Database
