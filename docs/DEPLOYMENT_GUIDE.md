@@ -158,6 +158,20 @@ cd /Users/user/Desktop/Development/azure-etl-project
    - **Event-based**: On file arrival
 3. Save and publish
 
+### Phase 9: Enable AI Search + OpenAI RAG (Optional)
+
+1. Create AI Search index and indexer:
+   ```bash
+   ./scripts/setup-ai-search-rag.sh
+   ```
+
+2. Deploy an OpenAI model in Azure OpenAI Studio (e.g., `gpt-4o-mini`).
+
+3. Run a RAG query:
+   ```bash
+   python3 scripts/rag-query.py
+   ```
+
 ## Post-Deployment Verification
 
 ### Checklist

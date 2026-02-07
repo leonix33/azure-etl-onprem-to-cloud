@@ -85,3 +85,21 @@ resource "azurerm_key_vault_secret" "sql_connection_string" {
 
   depends_on = [azurerm_key_vault_access_policy.terraform_policy]
 }
+
+# Store Azure AI Search admin key
+resource "azurerm_key_vault_secret" "search_admin_key" {
+  name         = "ai-search-admin-key"
+  value        = azurerm_search_service.etl_search.primary_key
+  key_vault_id = azurerm_key_vault.etl_kv.id
+
+  depends_on = [azurerm_key_vault_access_policy.terraform_policy]
+}
+
+# Store Azure OpenAI key
+resource "azurerm_key_vault_secret" "openai_api_key" {
+  name         = "openai-api-key"
+  value        = azurerm_cognitive_account.etl_openai.primary_access_key
+  key_vault_id = azurerm_key_vault.etl_kv.id
+
+  depends_on = [azurerm_key_vault_access_policy.terraform_policy]
+}

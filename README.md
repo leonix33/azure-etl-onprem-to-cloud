@@ -170,7 +170,63 @@ azure-etl-project/
 └── README.md             # This file
 ```
 
+<<<<<<< HEAD
 ##  Cost Management
+=======
+## 🤖 AI Search + OpenAI RAG
+
+This project now includes Azure AI Search + Azure OpenAI for document Q&A.
+
+1. Deploy infrastructure:
+```bash
+./scripts/deploy.sh
+```
+
+2. Create search index and indexer:
+```bash
+./scripts/setup-ai-search-rag.sh
+```
+
+3. Run RAG query:
+```bash
+python3 scripts/rag-query.py
+```
+
+See [docs/AI_RAG_GUIDE.md](docs/AI_RAG_GUIDE.md) for details.
+
+### RAG UI
+
+Run the local UI endpoint:
+```bash
+./scripts/run-rag-ui.sh
+```
+
+Guide: [docs/AI_RAG_UI_GUIDE.md](docs/AI_RAG_UI_GUIDE.md)
+
+### RAG API (Production Ready)
+
+Run the API endpoint:
+```bash
+./scripts/run-rag-api.sh
+```
+
+Guide: [docs/AI_RAG_API_GUIDE.md](docs/AI_RAG_API_GUIDE.md)
+
+### Docker (RAG API + Redis)
+
+Run with Docker Compose:
+```bash
+docker compose up --build
+```
+
+Guide: [docs/DOCKER_RAG_API_GUIDE.md](docs/DOCKER_RAG_API_GUIDE.md)
+
+### Kubernetes (RAG API + Redis)
+
+Manifests are in [k8s](k8s). Guide: [docs/KUBERNETES_DEPLOYMENT.md](docs/KUBERNETES_DEPLOYMENT.md)
+
+## 💰 Cost Management
+>>>>>>> 1bfaabd (Add Azure AI Search + OpenAI RAG with API/UI and k8s)
 
 ### Estimated Monthly Costs (24/7 operation)
 

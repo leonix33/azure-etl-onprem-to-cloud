@@ -110,6 +110,20 @@ This document provides detailed architectural information about the Azure ETL pr
      - Retention policy ready
    - Destination: Blob Storage archive-data
 
+## AI Layer (RAG)
+
+```
+ADLS Gen2 (processed-data)
+   └── Azure AI Search (index + indexer)
+         └── Azure OpenAI (Q&A over retrieved context)
+```
+
+### RAG Flow
+
+1. Documents in `processed-data` are indexed by Azure AI Search
+2. Search retrieves top‑K results for a query
+3. Azure OpenAI uses retrieved context to answer questions
+
 ## Network Architecture
 
 ```

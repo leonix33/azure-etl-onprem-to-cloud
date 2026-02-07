@@ -95,6 +95,38 @@ output "fabric_portal_url" {
   value       = "https://app.fabric.microsoft.com"
 }
 
+output "search_service_name" {
+  description = "Name of the Azure AI Search service"
+  value       = azurerm_search_service.etl_search.name
+}
+
+output "search_service_endpoint" {
+  description = "Azure AI Search endpoint"
+  value       = "https://${azurerm_search_service.etl_search.name}.search.windows.net"
+}
+
+output "search_admin_key" {
+  description = "Azure AI Search admin key"
+  value       = azurerm_search_service.etl_search.primary_key
+  sensitive   = true
+}
+
+output "openai_account_name" {
+  description = "Azure OpenAI account name"
+  value       = azurerm_cognitive_account.etl_openai.name
+}
+
+output "openai_endpoint" {
+  description = "Azure OpenAI endpoint"
+  value       = azurerm_cognitive_account.etl_openai.endpoint
+}
+
+output "openai_api_key" {
+  description = "Azure OpenAI primary key"
+  value       = azurerm_cognitive_account.etl_openai.primary_access_key
+  sensitive   = true
+}
+
 
 output "shir_name" {
   description = "Name of the Self-Hosted Integration Runtime"

@@ -81,3 +81,27 @@ variable "fabric_admin_emails" {
   type        = list(string)
   default     = ["admin@example.com"]
 }
+
+variable "search_sku" {
+  description = "Azure AI Search SKU (basic, standard, standard2, standard3)"
+  type        = string
+  default     = "basic"
+}
+
+variable "search_replica_count" {
+  description = "Azure AI Search replica count"
+  type        = number
+  default     = 1
+}
+
+variable "search_partition_count" {
+  description = "Azure AI Search partition count"
+  type        = number
+  default     = 1
+}
+
+variable "openai_sku" {
+  description = "Azure OpenAI SKU"
+  type        = string
+  default     = "S0"
+}

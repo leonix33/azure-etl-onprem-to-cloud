@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rag-api-config
+  namespace: rag-system
+data:
+  SEARCH_INDEX: etl-docs-index
+  OPENAI_DEPLOYMENT: gpt-4o-mini
+  OPENAI_EMBEDDING_DEPLOYMENT: text-embedding-3-small
+  RAG_RATE_LIMIT_PER_MIN: "120"
+  REDIS_URL: redis://redis:6379/0
+  # Optional filter example:
+  # SEARCH_FILTER: "startswith(metadata_storage_path, 'processed-data/hr/')"
