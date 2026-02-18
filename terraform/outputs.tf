@@ -70,6 +70,16 @@ output "application_insights_connection_string" {
   sensitive   = true
 }
 
+output "keyvault_dashboard_id" {
+  description = "ID of the Key Vault monitoring dashboard workbook"
+  value       = azurerm_application_insights_workbook.keyvault_dashboard.id
+}
+
+output "keyvault_dashboard_url" {
+  description = "URL to access the Key Vault monitoring dashboard"
+  value       = "https://portal.azure.com/#@/resource${azurerm_application_insights_workbook.keyvault_dashboard.id}"
+}
+
 output "databricks_workspace_url" {
   description = "URL of the Databricks workspace"
   value       = "https://${azurerm_databricks_workspace.etl_databricks.workspace_url}"
@@ -181,6 +191,11 @@ output "deployment_instructions" {
     
     5. Test the ETL pipeline
     
+    6. Monitor Key Vault secrets:
+       - Run: python scripts/check-keyvault-secrets.py --vault-name ${azurerm_key_vault.etl_kv.name}
+       - View Dashboard: https://portal.azure.com/#@/resource${azurerm_application_insights_workbook.keyvault_dashboard.id}
+       - Check Log Analytics: ${azurerm_log_analytics_workspace.etl_logs.name}
+    
     Resources Created:
     - Resource Group: ${azurerm_resource_group.etl_rg.name}
     - VM: ${azurerm_windows_virtual_machine.shir_vm.name}
@@ -188,6 +203,8 @@ output "deployment_instructions" {
     - Key Vault: ${azurerm_key_vault.etl_kv.name}
     - Data Factory: ${azurerm_data_factory.etl_adf.name}
     - SQL Server: ${azurerm_mssql_server.etl_sql.fully_qualified_domain_name}
+    - Log Analytics: ${azurerm_log_analytics_workspace.etl_logs.name}
+    - KeyVault Dashboard: Key Vault Security Dashboard
     
     Clean up: terraform destroy -auto-approve
     ========================================

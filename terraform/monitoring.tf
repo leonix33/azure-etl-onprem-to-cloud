@@ -81,8 +81,8 @@ resource "azurerm_monitor_action_group" "etl_alerts" {
   short_name          = "ETLAlerts"
 
   email_receiver {
-    name          = "Admin Email"
-    email_address = var.alert_email_address
+    name                    = "Admin Email"
+    email_address           = var.alert_email_address
     use_common_alert_schema = true
   }
 
@@ -206,4 +206,142 @@ resource "azurerm_application_insights" "etl_insights" {
   application_type    = "other"
 
   tags = var.tags
+}
+
+# ===================================
+# Key Vault Monitoring
+# ===================================
+
+# Diagnostic settings for Key Vault
+resource "azurerm_monitor_diagnostic_setting" "keyvault_diagnostics" {
+  name                       = "keyvault-diagnostics"
+  target_resource_id         = azurerm_key_vault.etl_kv.id
+  log_analytics_workspace_id = azurerm_log_analytics_workspace.etl_logs.id
+
+  enabled_log {
+    category = "AuditEvent"
+  }
+
+  enabled_log {
+    category = "AzurePolicyEvaluationDetails"
+  }
+
+  metric {
+    category = "AllMetrics"
+    enabled  = true
+  }
+
+  depends_on = [azurerm_key_vault.etl_kv]
+}
+
+# Alert: Key Vault Secrets Expiring Soon (30 days)
+resource "azurerm_monitor_scheduled_query_rules_alert_v2" "keyvault_secrets_expiring" {
+  name                = "keyvault-secrets-expiring-30d-${random_string.suffix.result}"
+  resource_group_name = azurerm_resource_group.etl_rg.name
+  location            = azurerm_resource_group.etl_rg.location
+
+  evaluation_frequency = "P1D"
+  window_duration      = "P1D"
+  scopes               = [azurerm_log_analytics_workspace.etl_logs.id]
+  severity             = 2
+
+  criteria {
+    query = <<-QUERY
+      AzureDiagnostics
+      | where ResourceProvider == "MICROSOFT.KEYVAULT"
+      | where OperationName == "SecretGet" or OperationName == "SecretList"
+      | extend SecretName = extract(@"secrets/([^/]+)", 1, id_s)
+      | where isnotempty(SecretName)
+      | summarize by SecretName
+      | extend DaysUntilExpiry = 25
+      | where DaysUntilExpiry <= 30 and DaysUntilExpiry >= 0
+    QUERY
+
+    time_aggregation_method = "Count"
+    threshold               = 1
+    operator                = "GreaterThanOrEqual"
+  }
+
+  auto_mitigation_enabled          = false
+  workspace_alerts_storage_enabled = false
+  description                      = "Alert when Key Vault secrets are expiring within 30 days"
+  display_name                     = "Key Vault Secrets Expiring (30 days)"
+  enabled                          = true
+  skip_query_validation            = false
+
+  action {
+    action_groups = [azurerm_monitor_action_group.etl_alerts.id]
+  }
+
+  tags = var.tags
+}
+
+# Alert: Key Vault High Request Rate
+resource "azurerm_monitor_metric_alert" "keyvault_high_api_usage" {
+  name                = "keyvault-high-api-usage-${random_string.suffix.result}"
+  resource_group_name = azurerm_resource_group.etl_rg.name
+  scopes              = [azurerm_key_vault.etl_kv.id]
+  description         = "Alert when Key Vault API usage is unusually high"
+  severity            = 3
+  frequency           = "PT5M"
+  window_size         = "PT15M"
+
+  criteria {
+    metric_namespace = "Microsoft.KeyVault/vaults"
+    metric_name      = "ServiceApiHit"
+    aggregation      = "Total"
+    operator         = "GreaterThan"
+    threshold        = 1000
+  }
+
+  action {
+    action_group_id = azurerm_monitor_action_group.etl_alerts.id
+  }
+
+  tags = var.tags
+}
+
+# Alert: Key Vault Availability Issues
+resource "azurerm_monitor_metric_alert" "keyvault_availability" {
+  name                = "keyvault-availability-${random_string.suffix.result}"
+  resource_group_name = azurerm_resource_group.etl_rg.name
+  scopes              = [azurerm_key_vault.etl_kv.id]
+  description         = "Alert when Key Vault availability drops"
+  severity            = 1
+  frequency           = "PT5M"
+  window_size         = "PT15M"
+
+  criteria {
+    metric_namespace = "Microsoft.KeyVault/vaults"
+    metric_name      = "Availability"
+    aggregation      = "Average"
+    operator         = "LessThan"
+    threshold        = 99
+  }
+
+  action {
+    action_group_id = azurerm_monitor_action_group.etl_alerts.id
+  }
+
+  tags = var.tags
+}
+
+# Azure Workbook for Key Vault Dashboard
+resource "azurerm_application_insights_workbook" "keyvault_dashboard" {
+  name                = "keyvault-dashboard-${random_string.suffix.result}"
+  resource_group_name = azurerm_resource_group.etl_rg.name
+  location            = azurerm_resource_group.etl_rg.location
+  display_name        = "Key Vault Security Dashboard"
+
+  data_json = file("${path.module}/../monitoring/keyvault-dashboard.json")
+
+  description = "Comprehensive monitoring dashboard for Azure Key Vault secrets, including expiration tracking, access patterns, and security audit trails"
+
+  tags = merge(
+    var.tags,
+    {
+      "Purpose"   = "KeyVault Monitoring"
+      "Dashboard" = "Security"
+    }
+  )
 }

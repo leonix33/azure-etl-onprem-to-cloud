@@ -1,0 +1,369 @@
+{
+  "version": "Notebook/1.0",
+  "items": [
+    {
+      "type": 1,
+      "content": {
+        "json": "# Azure Key Vault Security Dashboard\n---\n\nThis dashboard provides comprehensive monitoring of Azure Key Vault secrets, including expiration tracking, access patterns, and security audit trails."
+      },
+      "name": "text - 0"
+    },
+    {
+      "type": 9,
+      "content": {
+        "version": "KqlParameterItem/1.0",
+        "parameters": [
+          {
+            "id": "b859a1f6-f7e3-498e-b302-31c1e7b1a520",
+            "version": "KqlParameterItem/1.0",
+            "name": "TimeRange",
+            "label": "Time Range",
+            "type": 4,
+            "isRequired": true,
+            "value": {
+              "durationMs": 2592000000
+            },
+            "typeSettings": {
+              "selectableValues": [
+                {
+                  "durationMs": 3600000
+                },
+                {
+                  "durationMs": 86400000
+                },
+                {
+                  "durationMs": 604800000
+                },
+                {
+                  "durationMs": 2592000000
+                },
+                {
+                  "durationMs": 7776000000
+                }
+              ],
+              "allowCustom": true
+            }
+          },
+          {
+            "id": "c7c91f2e-84f5-4d3a-b392-8e8e8e8e8e8e",
+            "version": "KqlParameterItem/1.0",
+            "name": "KeyVault",
+            "label": "Key Vault",
+            "type": 5,
+            "isRequired": true,
+            "query": "AzureDiagnostics\r\n| where ResourceProvider == \"MICROSOFT.KEYVAULT\"\r\n| distinct Resource\r\n| order by Resource asc",
+            "typeSettings": {
+              "additionalResourceOptions": [
+                "value::all"
+              ],
+              "showDefault": false
+            },
+            "timeContext": {
+              "durationMs": 0
+            },
+            "timeContextFromParameter": "TimeRange",
+            "queryType": 0,
+            "resourceType": "microsoft.operationalinsights/workspaces"
+          }
+        ],
+        "style": "pills",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces"
+      },
+      "name": "parameters - 1"
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "## 🔐 Secret Expiration Overview"
+      },
+      "name": "text - 2"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "KeyVaultSecretExpiry_CL\n| where TimeGenerated > ago(1d)\n| where KeyVaultName_s == '{KeyVault}' or '{KeyVault}' == 'All'\n| extend DaysUntilExpiry = datetime_diff('day', ExpirationDate_t, now())\n| extend Status = case(\n    DaysUntilExpiry < 0, \"Expired\",\n    DaysUntilExpiry <= 7, \"Critical (≤7 days)\",\n    DaysUntilExpiry <= 30, \"Warning (≤30 days)\",\n    DaysUntilExpiry <= 90, \"Notice (≤90 days)\",\n    \"OK\"\n)\n| summarize Count = count() by Status\n| order by Count desc",
+        "size": 3,
+        "title": "Secrets by Expiration Status",
+        "timeContextFromParameter": "TimeRange",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces",
+        "visualization": "piechart",
+        "chartSettings": {
+          "seriesLabelSettings": [
+            {
+              "seriesName": "Expired",
+              "color": "redBright"
+            },
+            {
+              "seriesName": "Critical (≤7 days)",
+              "color": "orange"
+            },
+            {
+              "seriesName": "Warning (≤30 days)",
+              "color": "yellow"
+            },
+            {
+              "seriesName": "Notice (≤90 days)",
+              "color": "blue"
+            },
+            {
+              "seriesName": "OK",
+              "color": "green"
+            }
+          ]
+        }
+      },
+      "customWidth": "50",
+      "name": "query - 3"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "KeyVaultSecretExpiry_CL\n| where TimeGenerated > ago(1d)\n| where KeyVaultName_s == '{KeyVault}' or '{KeyVault}' == 'All'\n| extend DaysUntilExpiry = datetime_diff('day', ExpirationDate_t, now())\n| extend Status = case(\n    DaysUntilExpiry < 0, 1,\n    DaysUntilExpiry <= 7, 2,\n    DaysUntilExpiry <= 30, 3,\n    DaysUntilExpiry <= 90, 4,\n    5\n)\n| summarize \n    Expired = countif(Status == 1),\n    Critical = countif(Status == 2),\n    Warning = countif(Status == 3),\n    Notice = countif(Status == 4),\n    OK = countif(Status == 5)",
+        "size": 3,
+        "title": "Secret Status Summary",
+        "timeContextFromParameter": "TimeRange",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces",
+        "visualization": "tiles",
+        "tileSettings": {
+          "titleContent": {
+            "columnMatch": "Column1",
+            "formatter": 1
+          },
+          "leftContent": {
+            "columnMatch": "Count",
+            "formatter": 12,
+            "formatOptions": {
+              "palette": "auto"
+            }
+          },
+          "showBorder": true
+        }
+      },
+      "customWidth": "50",
+      "name": "query - 4"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "KeyVaultSecretExpiry_CL\n| where TimeGenerated > ago(1d)\n| where KeyVaultName_s == '{KeyVault}' or '{KeyVault}' == 'All'\n| extend DaysUntilExpiry = datetime_diff('day', ExpirationDate_t, now())\n| where DaysUntilExpiry <= 90\n| extend Status = case(\n    DaysUntilExpiry < 0, \"🔴 Expired\",\n    DaysUntilExpiry <= 7, \"🟠 Critical\",\n    DaysUntilExpiry <= 30, \"🟡 Warning\",\n    DaysUntilExpiry <= 90, \"🔵 Notice\",\n    \"🟢 OK\"\n)\n| project \n    Status,\n    SecretName = SecretName_s,\n    KeyVault = KeyVaultName_s,\n    ExpirationDate = format_datetime(ExpirationDate_t, 'yyyy-MM-dd'),\n    DaysRemaining = DaysUntilExpiry,\n    LastUpdated = format_datetime(LastUpdated_t, 'yyyy-MM-dd')\n| order by DaysUntilExpiry asc",
+        "size": 0,
+        "title": "⚠️ Secrets Expiring Within 90 Days",
+        "timeContextFromParameter": "TimeRange",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces",
+        "gridSettings": {
+          "formatters": [
+            {
+              "columnMatch": "Status",
+              "formatter": 18,
+              "formatOptions": {
+                "thresholdsOptions": "colors",
+                "thresholdsGrid": [
+                  {
+                    "operator": "contains",
+                    "thresholdValue": "Expired",
+                    "representation": "redBright",
+                    "text": "{0}"
+                  },
+                  {
+                    "operator": "contains",
+                    "thresholdValue": "Critical",
+                    "representation": "orange",
+                    "text": "{0}"
+                  },
+                  {
+                    "operator": "contains",
+                    "thresholdValue": "Warning",
+                    "representation": "yellow",
+                    "text": "{0}"
+                  },
+                  {
+                    "operator": "contains",
+                    "thresholdValue": "Notice",
+                    "representation": "blue",
+                    "text": "{0}"
+                  },
+                  {
+                    "operator": "Default",
+                    "thresholdValue": null,
+                    "representation": "green",
+                    "text": "{0}"
+                  }
+                ]
+              }
+            },
+            {
+              "columnMatch": "DaysRemaining",
+              "formatter": 8,
+              "formatOptions": {
+                "palette": "redGreen"
+              }
+            }
+          ],
+          "rowLimit": 1000,
+          "filter": true
+        }
+      },
+      "name": "query - 5"
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "## 📊 Access Patterns & Audit"
+      },
+      "name": "text - 6"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "AzureDiagnostics\n| where ResourceProvider == \"MICROSOFT.KEYVAULT\"\n| where Resource == '{KeyVault}' or '{KeyVault}' == 'All'\n| where TimeGenerated {TimeRange}\n| where OperationName has_any (\"SecretGet\", \"SecretSet\", \"SecretList\", \"SecretDelete\")\n| summarize \n    TotalOperations = count(),\n    SecretGets = countif(OperationName == \"SecretGet\"),\n    SecretSets = countif(OperationName == \"SecretSet\"),\n    SecretLists = countif(OperationName == \"SecretList\"),\n    SecretDeletes = countif(OperationName == \"SecretDelete\")\n    by bin(TimeGenerated, 1h)\n| render timechart",
+        "size": 0,
+        "title": "Key Vault Operations Over Time",
+        "timeContextFromParameter": "TimeRange",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces"
+      },
+      "customWidth": "50",
+      "name": "query - 7"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "AzureDiagnostics\n| where ResourceProvider == \"MICROSOFT.KEYVAULT\"\n| where Resource == '{KeyVault}' or '{KeyVault}' == 'All'\n| where TimeGenerated {TimeRange}\n| where OperationName == \"SecretGet\"\n| extend SecretName = extract(@\"secrets/([^/]+)\", 1, id_s)\n| where isnotempty(SecretName)\n| summarize AccessCount = count() by SecretName\n| top 10 by AccessCount desc\n| render barchart",
+        "size": 0,
+        "title": "Top 10 Most Accessed Secrets",
+        "timeContextFromParameter": "TimeRange",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces"
+      },
+      "customWidth": "50",
+      "name": "query - 8"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "AzureDiagnostics\n| where ResourceProvider == \"MICROSOFT.KEYVAULT\"\n| where Resource == '{KeyVault}' or '{KeyVault}' == 'All'\n| where TimeGenerated {TimeRange}\n| where OperationName has_any (\"SecretGet\", \"SecretSet\", \"SecretList\", \"SecretDelete\")\n| extend SecretName = extract(@\"secrets/([^/]+)\", 1, id_s)\n| extend CallerIdentity = coalesce(identity_claim_upn_s, identity_claim_appid_g, \"Unknown\")\n| extend Success = iff(ResultSignature == \"OK\", \"✅ Success\", \"❌ Failed\")\n| project \n    TimeGenerated,\n    Operation = OperationName,\n    SecretName,\n    Caller = CallerIdentity,\n    CallerIP = CallerIPAddress,\n    Success,\n    ResultDescription\n| order by TimeGenerated desc\n| take 100",
+        "size": 0,
+        "title": "Recent Key Vault Activity (Last 100 Operations)",
+        "timeContextFromParameter": "TimeRange",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces",
+        "gridSettings": {
+          "formatters": [
+            {
+              "columnMatch": "TimeGenerated",
+              "formatter": 6
+            },
+            {
+              "columnMatch": "Success",
+              "formatter": 18,
+              "formatOptions": {
+                "thresholdsOptions": "icons",
+                "thresholdsGrid": [
+                  {
+                    "operator": "contains",
+                    "thresholdValue": "Success",
+                    "representation": "success",
+                    "text": ""
+                  },
+                  {
+                    "operator": "Default",
+                    "thresholdValue": null,
+                    "representation": "failed",
+                    "text": ""
+                  }
+                ]
+              }
+            }
+          ],
+          "filter": true
+        }
+      },
+      "name": "query - 9"
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "## 🚨 Security & Alerts"
+      },
+      "name": "text - 10"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "AzureDiagnostics\n| where ResourceProvider == \"MICROSOFT.KEYVAULT\"\n| where Resource == '{KeyVault}' or '{KeyVault}' == 'All'\n| where TimeGenerated {TimeRange}\n| where ResultSignature != \"OK\"\n| extend SecretName = extract(@\"secrets/([^/]+)\", 1, id_s)\n| summarize FailedAttempts = count() by CallerIPAddress, identity_claim_upn_s, OperationName, ResultDescription\n| order by FailedAttempts desc\n| take 20",
+        "size": 0,
+        "title": "⚠️ Failed Access Attempts",
+        "timeContextFromParameter": "TimeRange",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces",
+        "gridSettings": {
+          "formatters": [
+            {
+              "columnMatch": "FailedAttempts",
+              "formatter": 8,
+              "formatOptions": {
+                "palette": "red"
+              }
+            }
+          ],
+          "filter": true
+        }
+      },
+      "customWidth": "50",
+      "name": "query - 11"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "AzureMetrics\n| where ResourceProvider == \"MICROSOFT.KEYVAULT\"\n| where Resource == '{KeyVault}' or '{KeyVault}' == 'All'\n| where TimeGenerated {TimeRange}\n| where MetricName == \"Availability\"\n| summarize AvgAvailability = avg(Average), MinAvailability = min(Minimum) by bin(TimeGenerated, 15m)\n| render timechart",
+        "size": 0,
+        "title": "Key Vault Availability (%)",
+        "timeContextFromParameter": "TimeRange",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces"
+      },
+      "customWidth": "50",
+      "name": "query - 12"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "AzureDiagnostics\n| where ResourceProvider == \"MICROSOFT.KEYVAULT\"\n| where Resource == '{KeyVault}' or '{KeyVault}' == 'All'\n| where OperationName == \"SecretGet\"\n| where TimeGenerated > ago(90d)\n| extend SecretName = extract(@\"secrets/([^/]+)\", 1, id_s)\n| summarize LastAccess = max(TimeGenerated) by SecretName\n| where LastAccess < ago(90d) or isempty(LastAccess)\n| extend DaysSinceLastAccess = datetime_diff('day', now(), LastAccess)\n| project SecretName, LastAccess, DaysSinceLastAccess\n| order by DaysSinceLastAccess desc",
+        "size": 0,
+        "title": "🔍 Unused Secrets (No Access in 90+ Days)",
+        "timeContextFromParameter": "TimeRange",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces",
+        "gridSettings": {
+          "formatters": [
+            {
+              "columnMatch": "DaysSinceLastAccess",
+              "formatter": 8,
+              "formatOptions": {
+                "palette": "orange"
+              }
+            }
+          ]
+        }
+      },
+      "name": "query - 13"
+    }
+  ],
+  "fallbackResourceIds": [
+    "/subscriptions/YOUR_SUBSCRIPTION_ID/resourceGroups/YOUR_RESOURCE_GROUP/providers/Microsoft.OperationalInsights/workspaces/YOUR_WORKSPACE"
+  ],
+  "$schema": "https://github.com/Microsoft/Application-Insights-Workbooks/blob/master/schema/workbook.json"
+}
